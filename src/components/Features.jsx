@@ -1,10 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faComments, faTheaterMasks, faChartLine } from '@fortawesome/free-solid-svg-icons';
 
-function FeatureCard({ icon, title, description }) {
+function FeatureCard({ icon, title, description, onClick }) {
   return (
-    <div className="feature-card">
+    <div className="feature-card" onClick={onClick}>
       <FontAwesomeIcon icon={icon} className="feature-icon" />
       <h2>{title}</h2>
       <p>{description}</p>
@@ -13,11 +14,14 @@ function FeatureCard({ icon, title, description }) {
 }
 
 function Features() {
+  const navigate = useNavigate();
+
   const features = [
     {
       icon: faComments,
       title: '실시간 대화',
-      description: 'AI와 실시간으로 대화하며 자연스러운 영어 표현을 익히세요.'
+      description: 'AI와 실시간으로 대화하며 자연스러운 영어 표현을 익히세요.',
+      onClick: () => navigate('/conversation')
     },
     {
       icon: faTheaterMasks,
