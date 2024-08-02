@@ -7,14 +7,6 @@ export const Container = styled.div`
   font-family: 'Arial', sans-serif;
 `;
 
-export const BackButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  color: #333;
-`;
-
 export const Header = styled.header`
   display: flex;
   justify-content: center;

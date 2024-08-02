@@ -7,7 +7,7 @@ export const sendAudioToServer = async (audioBlob) => {
   try {
     const response = await axiosInstance.post('/conversations/voice-conversation', formData, {
       headers: {
-        'Content-Type': 'multipart/form-data'
+        'Content-Type': 'multipart/form-data',
       }
     });
     return response.data;
@@ -34,4 +34,4 @@ export const getAudioResponse = async (audioUrl) => {
       }
       throw error;
     }
-  };
+};

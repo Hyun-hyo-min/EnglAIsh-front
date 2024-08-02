@@ -19,11 +19,10 @@ const Button = styled.button`
   }
 `;
 
-const GoogleAuth = ({ onLoginSuccess }) => {
+const GoogleAuth = () => {
     const handleGoogleLogin = async () => {
         try {
-            // 백엔드의 Google 로그인 URL로 리다이렉트
-            window.location.href = 'http://localhost:3000/auth/to-google';
+            window.location.href = `${process.env.REACT_APP_API_URL}/auth/to-google`;
         } catch (error) {
             console.error('Error during Google authentication:', error);
         }

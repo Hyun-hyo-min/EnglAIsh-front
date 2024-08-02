@@ -19,6 +19,7 @@ const AIConversation = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [conversation, setConversation] = useState([]);
     const [inputText, setInputText] = useState('');
+    const [error, setError] = useState(null);
     const mediaRecorder = useRef(null);
     const audioContext = useRef(null);
 
@@ -48,9 +49,10 @@ const AIConversation = () => {
             });
 
             setIsRecording(true);
+            setError(null);
         } catch (error) {
             console.error('Error starting recording:', error);
-            setConversation(prev => [...prev, { type: 'error', content: 'Failed to start recording' }]);
+            setError('녹음을 시작하는 데 실패했습니다. 마이크 권한을 확인해주세요.');
         }
     };
 
@@ -62,20 +64,27 @@ const AIConversation = () => {
     };
 
     const handleAudioSend = async (audioBlob) => {
+        setIsLoading(true);
+        setError(null);
         try {
             const result = await sendAudioToServer(audioBlob);
             const audioUrl = result.audioUrl;
 
             setConversation(prev => [...prev,
-            { type: 'user', content: result.userText },
-            { type: 'ai', content: result.aiText, audioUrl: audioUrl }
+                { type: 'user', content: result.userText },
+                { type: 'ai', content: result.aiText, audioUrl: audioUrl }
             ]);
 
             playAudioResponse(audioUrl);
-
         } catch (error) {
             console.error('Error handling audio send:', error);
-            setConversation(prev => [...prev, { type: 'error', content: 'Failed to get AI response' }]);
+            if (error.response && error.response.status === 400 && error.response.data.message === 'Daily message limit exceeded') {
+                setError('일일 메시지 한도를 초과했습니다. 내일 다시 시도해주세요.');
+            } else {
+                setError('AI 응답을 받는 데 실패했습니다. 잠시 후 다시 시도해주세요.');
+            }
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -85,6 +94,7 @@ const AIConversation = () => {
             audio.play();
         } catch (error) {
             console.error('Error playing audio:', error);
+            setError('오디오 재생에 실패했습니다.');
         }
     };
 
@@ -97,6 +107,7 @@ const AIConversation = () => {
 
         setConversation(prev => [...prev, { type: 'user', content: inputText }]);
         setInputText('');
+        // 텍스트 메시지 전송 로직 구현 예정
     };
 
     return (
@@ -115,6 +126,7 @@ const AIConversation = () => {
                         )}
                     </Message>
                 ))}
+                {error && <Message type="error"><strong>Error:</strong> {error}</Message>}
             </ConversationBox>
             <InputContainer>
                 <ChatInput
@@ -134,6 +146,7 @@ const AIConversation = () => {
                     <ControlButton
                         isRecording={isRecording}
                         onClick={isRecording ? stopRecording : startRecording}
+                        disabled={!!error}
                     >
                         {isRecording ? <FaStop /> : <FaMicrophone />}
                     </ControlButton>

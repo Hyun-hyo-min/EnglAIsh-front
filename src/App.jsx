@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import Login from './components/Login';
@@ -6,19 +6,27 @@ import Features from './components/Features';
 import AIConversation from './components/AIConversation';
 import Footer from './components/Footer';
 import AuthCallback from './components/AuthCallback';
+import Cookies from 'js-cookie';
 import './styles/App.css';
 
 function App() {
   const [user, setUser] = useState(null);
 
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (token) {
+      setUser({ token });
+    }
+  }, []);
+
   const handleLoginSuccess = (token) => {
-    // 토큰을 사용하여 사용자 정보를 설정하거나 추가적인 사용자 정보를 가져올 수 있습니다.
+    Cookies.set('token', token);
     setUser({ token });
   };
 
   const handleLogout = () => {
+    Cookies.remove('token');
     setUser(null);
-    localStorage.removeItem('token');
   };
 
   return (

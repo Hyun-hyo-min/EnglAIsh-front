@@ -12,9 +12,9 @@ const AuthCallback = ({ onLoginSuccess }) => {
     if (token) {
       localStorage.setItem('token', token);
       onLoginSuccess(token);
-      navigate('/dashboard');
+      navigate('/');
     }
-  }, [location]);
+  }, [location, navigate, onLoginSuccess]);
 
   return <div>Authenticating...</div>;
 };
