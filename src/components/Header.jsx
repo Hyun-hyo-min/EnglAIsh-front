@@ -1,19 +1,35 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 import { faGraduationCap } from '@fortawesome/free-solid-svg-icons';
+import {
+  HeaderContainer,
+  HeaderContent,
+  Logo,
+  LogoIcon,
+  NavButtons,
+  Button,
+} from '../styles/Header.styles';
 
-function Header() {
+
+function Header({ isLoggedIn, onLogout }) {
   return (
-    <header>
-      <div className="container hero">
-        <div className="hero-content">
-          <FontAwesomeIcon icon={faGraduationCap} className="hero-icon" />
-          <h1>EnglishAI</h1>
-          <p>AI 기반 대화형 영어 학습으로 자신감 있는 영어 실력을 갖추세요.</p>
-          <a href="#" className="cta-button">무료로 시작하기</a>
-        </div>
-      </div>
-    </header>
+    <HeaderContainer>
+      <HeaderContent>
+        <Logo to="/">
+          <LogoIcon icon={faGraduationCap} />
+          EnglAIsh
+        </Logo>
+        <NavButtons>
+          {isLoggedIn ? (
+            <Button onClick={onLogout}>로그아웃</Button>
+          ) : (
+            <>
+              <Button as={Link} to="/login" primary>로그인</Button>
+            </>
+          )}
+        </NavButtons>
+      </HeaderContent>
+    </HeaderContainer>
   );
 }
 

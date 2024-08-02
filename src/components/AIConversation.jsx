@@ -1,18 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { sendAudioToServer } from '../api/conversation';
-import '../styles/App.css';
+import { FaMicrophone, FaStop, FaPlay, FaPaperPlane } from 'react-icons/fa';
+import {
+    Container,
+    Header,
+    Title,
+    ConversationBox,
+    Message,
+    ControlButton,
+    PlayButton,
+    InputContainer,
+    ChatInput,
+    SendButton
+} from '../styles/AIConversation.styles';
 
 const AIConversation = () => {
-    const navigate = useNavigate();
     const [isRecording, setIsRecording] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [conversation, setConversation] = useState([]);
+    const [inputText, setInputText] = useState('');
     const mediaRecorder = useRef(null);
     const audioContext = useRef(null);
 
     useEffect(() => {
-        audioContext.current = new (window.AudioContext)();
+        audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
         return () => {
             if (audioContext.current) {
                 audioContext.current.close();
@@ -55,11 +66,9 @@ const AIConversation = () => {
             const result = await sendAudioToServer(audioBlob);
             const audioUrl = result.audioUrl;
 
-            console.log('Received audio URL:', audioUrl);
-
             setConversation(prev => [...prev,
-            { type: 'user', content: 'Audio message sent' },
-            { type: 'ai', content: result.text, audioUrl: audioUrl }
+            { type: 'user', content: result.userText },
+            { type: 'ai', content: result.aiText, audioUrl: audioUrl }
             ]);
 
             playAudioResponse(audioUrl);
@@ -79,25 +88,58 @@ const AIConversation = () => {
         }
     };
 
+    const handleInputChange = (e) => {
+        setInputText(e.target.value);
+    };
+
+    const handleSendMessage = async () => {
+        if (inputText.trim() === '') return;
+
+        setConversation(prev => [...prev, { type: 'user', content: inputText }]);
+        setInputText('');
+    };
+
     return (
-        <div>
-            <button onClick={() => navigate('/')}>뒤로 가기</button>
-            <div style={{ height: '300px', overflowY: 'scroll', border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}>
+        <Container>
+            <Header>
+                <Title>English With AI!</Title>
+            </Header>
+            <ConversationBox>
                 {conversation.map((message, index) => (
-                    <div key={index} style={{ marginBottom: '10px', textAlign: message.type === 'user' ? 'right' : 'left' }}>
+                    <Message key={index} type={message.type}>
                         <strong>{message.type === 'user' ? 'You' : message.type === 'ai' ? 'AI' : 'Error'}:</strong> {message.content}
-                        {message.audioUrl && <button onClick={() => playAudioResponse(message.audioUrl)}>Play Response</button>}
-                    </div>
+                        {message.audioUrl && (
+                            <PlayButton onClick={() => playAudioResponse(message.audioUrl)}>
+                                <FaPlay />
+                            </PlayButton>
+                        )}
+                    </Message>
                 ))}
+            </ConversationBox>
+            <InputContainer>
+                <ChatInput
+                    type="text"
+                    value={inputText}
+                    onChange={handleInputChange}
+                    placeholder="메시지를 입력하세요..."
+                />
+                <SendButton onClick={handleSendMessage}>
+                    <FaPaperPlane />
+                </SendButton>
+            </InputContainer>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
+                {isLoading ? (
+                    <div>Processing...</div>
+                ) : (
+                    <ControlButton
+                        isRecording={isRecording}
+                        onClick={isRecording ? stopRecording : startRecording}
+                    >
+                        {isRecording ? <FaStop /> : <FaMicrophone />}
+                    </ControlButton>
+                )}
             </div>
-            {isLoading ? (
-                <div>Processing...</div>
-            ) : isRecording ? (
-                <button onClick={stopRecording}>Stop Recording</button>
-            ) : (
-                <button onClick={startRecording}>Start Recording</button>
-            )}
-        </div>
+        </Container>
     );
 };
 
