@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { sendAudioToServer, getAudioResponse } from '../api/conversation';
+import { sendAudioToServer } from '../api/conversation';
 import '../styles/App.css';
 
 const AIConversation = () => {
@@ -12,7 +12,7 @@ const AIConversation = () => {
     const audioContext = useRef(null);
 
     useEffect(() => {
-        audioContext.current = new (window.AudioContext || window.webkitAudioContext)();
+        audioContext.current = new (window.AudioContext)();
         return () => {
             if (audioContext.current) {
                 audioContext.current.close();
@@ -51,39 +51,31 @@ const AIConversation = () => {
     };
 
     const handleAudioSend = async (audioBlob) => {
-        setIsLoading(true);
         try {
             const result = await sendAudioToServer(audioBlob);
-            console.log('result', result);
-            const fullAudioUrl = `${process.env.REACT_APP_API_URL}${result.audioUrl}`;
-            console.log('Full audio URL:', fullAudioUrl);
+            const audioUrl = result.audioUrl;
+
+            console.log('Received audio URL:', audioUrl);
+
             setConversation(prev => [...prev,
-                { type: 'user', content: 'Audio message sent' },
-                { type: 'ai', content: result.text, audioUrl: fullAudioUrl }
+            { type: 'user', content: 'Audio message sent' },
+            { type: 'ai', content: result.text, audioUrl: audioUrl }
             ]);
-            playAudioResponse(fullAudioUrl);
+
+            playAudioResponse(audioUrl);
+
         } catch (error) {
             console.error('Error handling audio send:', error);
-            setConversation(prev => [...prev, { type: 'error', content: `Failed to get AI response: ${error.message}` }]);
-        } finally {
-            setIsLoading(false);
+            setConversation(prev => [...prev, { type: 'error', content: 'Failed to get AI response' }]);
         }
     };
 
     const playAudioResponse = async (audioUrl) => {
         try {
-            console.log('Playing audio from:', audioUrl);
-            const audioData = await getAudioResponse(audioUrl);
-            
-            console.log("audio response", audioData)
-            const audioBuffer = await audioContext.current.decodeAudioData(audioData);
-            const source = audioContext.current.createBufferSource();
-            source.buffer = audioBuffer;
-            source.connect(audioContext.current.destination);
-            source.start(0);
+            const audio = new Audio(audioUrl);
+            audio.play();
         } catch (error) {
             console.error('Error playing audio:', error);
-            setConversation(prev => [...prev, { type: 'error', content: `Failed to play audio: ${error.message}` }]);
         }
     };
 
