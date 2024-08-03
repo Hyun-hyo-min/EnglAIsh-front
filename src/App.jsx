@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Login from './components/Login';
 import Features from './components/Features';
 import AIConversation from './components/AIConversation';
+import ProgressAnalysis from './components/ProgressAnalysis';
 import Footer from './components/Footer';
 import AuthCallback from './components/AuthCallback';
 import Cookies from 'js-cookie';
@@ -38,6 +39,10 @@ function App() {
           <Route 
             path="/conversation" 
             element={user ? <AIConversation user={user} /> : <Navigate to="/login" />} 
+          />
+          <Route 
+            path="/progress" 
+            element={user ? <ProgressAnalysis user={user} /> : <Navigate to="/login" />} 
           />
           <Route 
             path="/login" 

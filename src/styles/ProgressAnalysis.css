@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+:root {
+  --primary-color: #4A90E2;
+  --background-color: #F5F7FA;
+  --text-color: #333333;
+  --accent-color: #FF6B6B;
+}
+
+.progress-analysis {
+  background-color: white;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+
+.progress-analysis:hover {
+  transform: translateY(-5px);
+}
+
+.progress-analysis .feature-icon {
+  font-size: 3rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+.progress-analysis h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.progress-analysis .progress-stats {
+  margin-top: 1rem;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.progress-analysis .progress-stats p {
+  margin: 0.5rem 0;
+}

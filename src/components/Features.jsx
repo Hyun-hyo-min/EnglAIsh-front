@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faComments, faTheaterMasks, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faComments, faChartLine } from '@fortawesome/free-solid-svg-icons';
 
 function FeatureCard({ icon, title, description, onClick }) {
   return (
@@ -24,24 +24,21 @@ function Features() {
       onClick: () => navigate('/conversation')
     },
     {
-      icon: faTheaterMasks,
-      title: '시나리오 학습',
-      description: '다양한 상황별 시나리오로 실전 영어 능력을 향상시킵니다.'
-    },
-    {
       icon: faChartLine,
       title: '진척도 분석',
-      description: 'AI가 분석한 맞춤형 학습 보고서로 효과적으로 실력을 키우세요.'
+      description: 'AI가 분석한 맞춤형 학습 보고서로 효과적으로 실력을 키우세요.',
+      onClick: () => navigate('/progress')
     }
   ];
 
   return (
-    <section className="features">
-      {features.map((feature, index) => (
-        <FeatureCard key={index} {...feature} />
-      ))}
+    <section className="features-container">
+      <div className="features-grid">
+        {features.map((feature, index) => (
+          <FeatureCard key={index} {...feature} />
+        ))}
+      </div>
     </section>
   );
 }
-
 export default Features;

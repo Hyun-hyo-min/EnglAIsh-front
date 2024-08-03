@@ -76,31 +76,3 @@ export const PlayButton = styled.button`
   cursor: pointer;
   margin-left: 10px;
 `;
-
-export const InputContainer = styled.div`
-  display: flex;
-  margin-top: 20px;
-`;
-
-export const ChatInput = styled.input`
-  flex-grow: 1;
-  padding: 10px;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  font-size: 1rem;
-`;
-
-export const SendButton = styled.button`
-  padding: 10px 20px;
-  margin-left: 10px;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-
-  &:hover {
-    background-color: #2980b9;
-  }
-`;

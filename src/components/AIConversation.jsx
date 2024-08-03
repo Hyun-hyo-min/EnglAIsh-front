@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { sendAudioToServer } from '../api/conversation';
-import { FaMicrophone, FaStop, FaPlay, FaPaperPlane } from 'react-icons/fa';
+import { FaMicrophone, FaStop, FaPlay } from 'react-icons/fa';
 import {
     Container,
     Header,
@@ -9,16 +9,12 @@ import {
     Message,
     ControlButton,
     PlayButton,
-    InputContainer,
-    ChatInput,
-    SendButton
 } from '../styles/AIConversation.styles';
 
 const AIConversation = () => {
     const [isRecording, setIsRecording] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [conversation, setConversation] = useState([]);
-    const [inputText, setInputText] = useState('');
     const [error, setError] = useState(null);
     const mediaRecorder = useRef(null);
     const audioContext = useRef(null);
@@ -98,18 +94,6 @@ const AIConversation = () => {
         }
     };
 
-    const handleInputChange = (e) => {
-        setInputText(e.target.value);
-    };
-
-    const handleSendMessage = async () => {
-        if (inputText.trim() === '') return;
-
-        setConversation(prev => [...prev, { type: 'user', content: inputText }]);
-        setInputText('');
-        // 텍스트 메시지 전송 로직 구현 예정
-    };
-
     return (
         <Container>
             <Header>
@@ -128,17 +112,7 @@ const AIConversation = () => {
                 ))}
                 {error && <Message type="error"><strong>Error:</strong> {error}</Message>}
             </ConversationBox>
-            <InputContainer>
-                <ChatInput
-                    type="text"
-                    value={inputText}
-                    onChange={handleInputChange}
-                    placeholder="메시지를 입력하세요..."
-                />
-                <SendButton onClick={handleSendMessage}>
-                    <FaPaperPlane />
-                </SendButton>
-            </InputContainer>
+
             <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                 {isLoading ? (
                     <div>Processing...</div>
