@@ -60,8 +60,8 @@ jobs:
           sudo chmod -R u+rwX /home/${{ secrets.EC2_USER }}/EnglAIsh-front
 
           echo "Serving the build using a web server..."
-          sudo rm -rf /var/www/engl-aish-front/*
-          sudo cp -r build/* /var/www/engl-aish-front/
+          sudo rm -rf /var/www/EnglAIsh-front/*
+          sudo cp -r build/* /var/www/EnglAIsh-front/
           sudo systemctl restart nginx
 
           echo "Frontend deployment completed successfully"
