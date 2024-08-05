@@ -29,7 +29,7 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        echo "${{ secrets.EC2_KEY }}" > $HOME/key.pem
+        echo "$EC2_KEY" > $HOME/key.pem
         chmod 400 $HOME/key.pem
         ssh -i $HOME/key.pem -o StrictHostKeyChecking=no -o ServerAliveInterval=60 ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'ENDSSH'
           set -ex
@@ -37,10 +37,17 @@ jobs:
           echo "Starting frontend deployment process..."
 
           echo "Navigating to frontend project directory..."
-          cd /home/ubuntu/EnglAIsh-front
+          cd /home/${{ secrets.EC2_USER }}/EnglAIsh-front
 
           echo "Pulling latest code..."
           git pull origin main
+
+          echo "Fixing permissions..."
+          sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} /home/${{ secrets.EC2_USER }}/EnglAIsh-front
+          sudo chmod -R u+rwX /home/${{ secrets.EC2_USER }}/EnglAIsh-front
+
+          echo "Cleaning up old node_modules..."
+          sudo rm -rf /home/${{ secrets.EC2_USER }}/EnglAIsh-front/node_modules
 
           echo "Installing dependencies..."
           npm ci
@@ -49,8 +56,8 @@ jobs:
           npm run build
 
           echo "Setting permissions..."
-          sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} /home/ubuntu/EnglAIsh-front
-          sudo chmod -R u+rwX /home/ubuntu/EnglAIsh-front
+          sudo chown -R ${{ secrets.EC2_USER }}:${{ secrets.EC2_USER }} /home/${{ secrets.EC2_USER }}/EnglAIsh-front
+          sudo chmod -R u+rwX /home/${{ secrets.EC2_USER }}/EnglAIsh-front
 
           echo "Serving the build using a web server..."
           sudo rm -rf /var/www/engl-aish-front/*
@@ -59,3 +66,4 @@ jobs:
 
           echo "Frontend deployment completed successfully"
         ENDSSH
+
